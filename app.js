@@ -1,10 +1,13 @@
 require('dotenv').config();
 const createError = require('http-errors');
 const express = require('express');
-const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const i18n = require('i18n');
+const session = require('express-session');
+const pgSession = require('connect-pg-simple');
+
+const { pool } = require('./db');
 
 const app = express();
 
@@ -18,7 +21,7 @@ app.use(cookieParser());
 app.use(function(_, res, next) {
   res.header(
     'Access-Control-Allow-Origin',
-    isDevelopment ? 'http://localhost:3000' : process.env.SITE_URL
+    isDevelopment ? 'http://localhost:3000' : process.env.CLIENT_SERVER
   );
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
   res.header(
@@ -42,8 +45,34 @@ i18n.configure({
 });
 
 /*
+ * Session
+ */
+
+const sessionStore = pgSession(session);
+
+app.use(
+  session({
+    secret: process.env.USER_SESSIONS_SECRET,
+    resave: false,
+    rolling: true,
+    saveUninitialized: true,
+    cookie: {
+      httpOnly: true,
+      sameSite: true,
+      maxAge: 31104000000, // 1 year
+      secure: false
+    },
+    store: new sessionStore({
+      pool: pool,
+      tableName: process.env.USER_SESSIONS_NAME
+    })
+  })
+);
+
+/*
  * Routers
  */
+
 app.use(require('./routes'));
 
 /*
