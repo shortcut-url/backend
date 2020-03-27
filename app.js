@@ -4,6 +4,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const i18n = require('i18n');
 
 const app = express();
 
@@ -25,6 +26,19 @@ app.use(function(_, res, next) {
     'Origin, X-Requested-With, Content-Type, Accept'
   );
   next();
+});
+
+/*
+ * Internationalization
+ */
+
+app.use(i18n.init);
+
+i18n.configure({
+  locales: ['en', 'ru'],
+  cookie: 'language',
+  directory: __dirname + '/locales',
+  defaultLocale: 'en'
 });
 
 /*
