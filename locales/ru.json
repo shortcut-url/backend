@@ -1,3 +1,8 @@
 {
-  "session_not-found": "Сессия не найдена"
+  "session_not-found": "Сессия не найдена",
+
+  "create-account_not-email": "Вы должны указать электронную почту в формате example@example.com",
+  "create-account_incorrect-password-length": "Пароль должен содержать от 4 до 64 символов",
+  "create-account_incorrect-name-length": "Имя пользователя должно содержать от 3 до 32 символов",
+  "create-account_not-unique-email": "Данный email уже зарегистрирован"
 }

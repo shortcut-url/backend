@@ -11,6 +11,7 @@
     "tabWidth": 2
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "connect-pg-simple": "^6.1.0",
     "cookie-parser": "^1.4.5",
     "debug": "~2.6.9",

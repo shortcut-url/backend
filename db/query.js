@@ -1,9 +1,9 @@
 const { pool } = require('./pool');
 
-function dbQuery(params) {
+function dbQuery(queryText, params) {
   return new Promise((resolve, reject) => {
     pool
-      .query(quertText, params)
+      .query(queryText, params)
       .then(res => {
         resolve(res);
       })
