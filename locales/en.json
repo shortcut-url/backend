@@ -4,5 +4,7 @@
   "create-account_not-email": "You must transfer emails in the format example@example.com",
   "create-account_incorrect-password-length": "Password must be between 4 and 64 characters",
   "create-account_incorrect-name-length": "Username must be between 4 and 64 characters",
-  "create-account_not-unique-email": "This email is already registered"
+  "create-account_not-unique-email": "This email is already registered",
+
+  "create-short-url_not-url": "Invalid URL"
 }

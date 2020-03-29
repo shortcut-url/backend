@@ -14,6 +14,12 @@ function validation(method) {
           .isLength({ min: 3, max: 64 })
           .withMessage('create-account_incorrect-name-length')
       ];
+    case 'url_create-short-url':
+      return [
+        body('originalURL')
+          .matches(/.\../)
+          .withMessage('create-short-url_not-url')
+      ];
 
     default:
       break;
