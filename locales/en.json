@@ -6,5 +6,8 @@
   "create-account_incorrect-name-length": "Username must be between 4 and 64 characters",
   "create-account_not-unique-email": "This email is already registered",
 
-  "create-short-url_not-url": "Invalid URL"
+  "create-short-url_not-url": "Invalid URL",
+
+  "create-session_user-not-found": "User with such email was not found or you entered the wrong password",
+  "create-session_incorrect-password": "User with such email was not found or you entered the wrong password"
 }

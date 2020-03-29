@@ -16,6 +16,23 @@ function createNewAccountWithEmail({ email, password, name }) {
   );
 }
 
+function isValidPassword(firstPassword, secondPassword) {
+  return bcrypt.compareSync(firstPassword, secondPassword);
+}
+
+async function GetUserUsingEmail({ email }) {
+  return dbQuery(
+    `
+      SELECT id, email, password, name
+      FROM users
+      WHERE email = $1
+    `,
+    [email]
+  );
+}
+
 module.exports = {
-  createNewAccountWithEmail
+  createNewAccountWithEmail,
+  GetUserUsingEmail,
+  isValidPassword
 };
