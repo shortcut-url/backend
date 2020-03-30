@@ -42,7 +42,7 @@ app.use(
     secret: process.env.USER_SESSIONS_SECRET,
     resave: false,
     rolling: true,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
       httpOnly: true,
       sameSite: true,
