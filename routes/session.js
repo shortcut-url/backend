@@ -45,7 +45,8 @@ router.post('/', async (req, res, next) => {
     req.session.user = {
       id: foundUser.id,
       email: foundUser.email,
-      name: foundUser.name
+      name: foundUser.name,
+      trackingNumberTransitions: foundUser.tracking_number_transitions
     };
 
     res.sendStatus(200);

@@ -10,7 +10,6 @@ function createNewAccountWithEmail({ email, password, name }) {
       INSERT INTO users(email, password, name) 
       VALUES 
         ($1, $2, $3)
-          
     `,
     [email, hashPassword, name]
   );
@@ -23,7 +22,7 @@ function isValidPassword(firstPassword, secondPassword) {
 async function GetUserUsingEmail({ email }) {
   return dbQuery(
     `
-      SELECT id, email, password, name
+      SELECT id, email, password, name, tracking_number_transitions
       FROM users
       WHERE email = $1
     `,

@@ -32,4 +32,17 @@ router.post('/', validation('user_create-account'), async (req, res, next) => {
   }
 });
 
+/*
+ * Get settings for future urls
+ */
+router.get('/settings/future-urls', (req, res, next) => {
+  let userSession = req.session.user;
+
+  if (!userSession) throw errorHandler('session_not-found', 404, res, next);
+
+  res.json({
+    trackingNumberTransitions: userSession.trackingNumberTransitions
+  });
+});
+
 module.exports = router;
