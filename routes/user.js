@@ -3,7 +3,10 @@ const { validationResult } = require('express-validator');
 
 const { validation } = require('../middlewares/validation');
 const { errorHandler } = require('../common/error-handler');
-const { createNewAccountWithEmail } = require('../models/user');
+const {
+  createNewAccountWithEmail,
+  changeParameterFutureURLs
+} = require('../models/user');
 
 const router = express.Router();
 
@@ -43,6 +46,34 @@ router.get('/settings/future-urls', (req, res, next) => {
   res.json({
     trackingNumberTransitions: userSession.trackingNumberTransitions
   });
+});
+
+/*
+ * Change user settings for future urls
+ */
+router.post('/settings/future-urls', async (req, res, next) => {
+  let userSession = req.session.user;
+
+  if (!userSession) throw errorHandler('session_not-found', 404, res, next);
+
+  let parameter = req.body;
+
+  switch (parameter.name) {
+    case 'trackingNumberTransitions':
+      userSession.trackingNumberTransitions = parameter.value;
+
+      await changeParameterFutureURLs({
+        name: 'tracking_number_transitions',
+        value: Boolean(parameter.value),
+        userId: userSession.id
+      });
+      break;
+
+    default:
+      break;
+  }
+
+  res.sendStatus(200);
 });
 
 module.exports = router;

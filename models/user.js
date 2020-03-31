@@ -22,16 +22,37 @@ function isValidPassword(firstPassword, secondPassword) {
 async function GetUserUsingEmail({ email }) {
   return dbQuery(
     `
-      SELECT id, email, password, name, tracking_number_transitions
-      FROM users
-      WHERE email = $1
+      SELECT 
+        id, 
+        email, 
+        password, 
+        name, 
+        tracking_number_transitions 
+      FROM 
+        users 
+      WHERE 
+        email = $1
     `,
     [email]
+  );
+}
+
+function changeParameterFutureURLs({ name, value, userId }) {
+  return dbQuery(
+    `
+      UPDATE 
+        users 
+      SET 
+        ${name} = ${value} 
+      WHERE 
+        id = ${userId}
+    `
   );
 }
 
 module.exports = {
   createNewAccountWithEmail,
   GetUserUsingEmail,
-  isValidPassword
+  isValidPassword,
+  changeParameterFutureURLs
 };
