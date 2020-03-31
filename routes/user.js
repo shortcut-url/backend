@@ -6,7 +6,8 @@ const { authCheck } = require('../middlewares/auth');
 const { errorHandler } = require('../common/error-handler');
 const {
   createNewAccountWithEmail,
-  changeParameterFutureURLs
+  changeParameterFutureURLs,
+  getCreatedURLs
 } = require('../models/user');
 
 const router = express.Router();
@@ -71,6 +72,24 @@ router.post('/settings/future-urls', authCheck, async (req, res, next) => {
   }
 
   res.sendStatus(200);
+});
+
+/*
+ * Get created URLs
+ */
+
+router.get('/created-urls', authCheck, async (req, res, next) => {
+  let currentUser = req.session.user;
+
+  let { startIndex, stopIndex } = req.query;
+
+  let createdURLs = await getCreatedURLs({
+    startIndex,
+    stopIndex,
+    userId: currentUser.id
+  });
+
+  res.json(createdURLs.rows);
 });
 
 module.exports = router;

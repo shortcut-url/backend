@@ -50,9 +50,34 @@ function changeParameterFutureURLs({ name, value, userId }) {
   );
 }
 
+function getCreatedURLs({ userId, startIndex, stopIndex }) {
+  let limit = +stopIndex - +startIndex;
+
+  return dbQuery(
+    `
+      SELECT 
+        "originalURL", 
+        "url", 
+        "trackingNumberTransitions", 
+        "createdAt", 
+        "updatedAt"
+      FROM 
+        urls 
+      WHERE 
+        "userId" = $1 
+      ORDER BY 
+        "createdAt" DESC 
+      LIMIT 
+        $2 OFFSET $3
+    `,
+    [userId, limit, +startIndex]
+  );
+}
+
 module.exports = {
   createNewAccountWithEmail,
   GetUserUsingEmail,
   isValidPassword,
-  changeParameterFutureURLs
+  changeParameterFutureURLs,
+  getCreatedURLs
 };
