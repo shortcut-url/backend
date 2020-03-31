@@ -7,7 +7,7 @@ function createNewAccountWithEmail({ email, password, name }) {
 
   return dbQuery(
     `
-      INSERT INTO users(email, password, name) 
+      INSERT INTO users("email", "password", "name") 
       VALUES 
         ($1, $2, $3)
     `,
@@ -23,11 +23,11 @@ async function GetUserUsingEmail({ email }) {
   return dbQuery(
     `
       SELECT 
-        id, 
-        email, 
-        password, 
-        name, 
-        tracking_number_transitions 
+        "id", 
+        "email", 
+        "password", 
+        "name", 
+        "trackingNumberTransitions"
       FROM 
         users 
       WHERE 
@@ -43,7 +43,7 @@ function changeParameterFutureURLs({ name, value, userId }) {
       UPDATE 
         users 
       SET 
-        ${name} = ${value} 
+        "${name}" = ${value} 
       WHERE 
         id = ${userId}
     `

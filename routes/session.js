@@ -43,7 +43,7 @@ router.post('/', async (req, res, next) => {
       id: foundUser.id,
       email: foundUser.email,
       name: foundUser.name,
-      trackingNumberTransitions: foundUser.tracking_number_transitions
+      trackingNumberTransitions: foundUser.trackingNumberTransitions
     };
 
     res.sendStatus(200);

@@ -60,7 +60,7 @@ router.post('/settings/future-urls', authCheck, async (req, res, next) => {
       currentUser.trackingNumberTransitions = parameter.value;
 
       await changeParameterFutureURLs({
-        name: 'tracking_number_transitions',
+        name: parameter.name,
         value: Boolean(parameter.value),
         userId: currentUser.id
       });

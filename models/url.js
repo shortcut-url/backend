@@ -15,11 +15,10 @@ function createShortURL({
   return dbQuery(
     `
       INSERT INTO urls(
-        original_url, user_id, url, tracking_number_transitions
+        "originalURL", "userId", "url", "trackingNumberTransitions"
       ) 
       VALUES 
         ($1, $2, $3, $4) RETURNING url
-      
     `,
     [originalURL, userId, shortURL, trackingNumberTransitions]
   );
