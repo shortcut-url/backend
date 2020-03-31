@@ -73,7 +73,7 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
 
-  res.json({ errors: { message: err.message } });
+  res.send(err.message);
 });
 
 module.exports = app;

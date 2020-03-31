@@ -2,6 +2,7 @@ const express = require('express');
 const { validationResult } = require('express-validator');
 
 const { validation } = require('../middlewares/validation');
+const { authCheck } = require('../middlewares/auth');
 const { errorHandler } = require('../common/error-handler');
 const {
   createNewAccountWithEmail,
@@ -38,34 +39,30 @@ router.post('/', validation('user_create-account'), async (req, res, next) => {
 /*
  * Get settings for future urls
  */
-router.get('/settings/future-urls', (req, res, next) => {
-  let userSession = req.session.user;
-
-  if (!userSession) throw errorHandler('session_not-found', 404, res, next);
+router.get('/settings/future-urls', authCheck, (req, res, next) => {
+  let currentUser = req.session.user;
 
   res.json({
-    trackingNumberTransitions: userSession.trackingNumberTransitions
+    trackingNumberTransitions: currentUser.trackingNumberTransitions
   });
 });
 
 /*
  * Change user settings for future urls
  */
-router.post('/settings/future-urls', async (req, res, next) => {
-  let userSession = req.session.user;
-
-  if (!userSession) throw errorHandler('session_not-found', 404, res, next);
+router.post('/settings/future-urls', authCheck, async (req, res, next) => {
+  let currentUser = req.session.user;
 
   let parameter = req.body;
 
   switch (parameter.name) {
     case 'trackingNumberTransitions':
-      userSession.trackingNumberTransitions = parameter.value;
+      currentUser.trackingNumberTransitions = parameter.value;
 
       await changeParameterFutureURLs({
         name: 'tracking_number_transitions',
         value: Boolean(parameter.value),
-        userId: userSession.id
+        userId: currentUser.id
       });
       break;
 

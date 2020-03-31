@@ -1,6 +1,7 @@
 const express = require('express');
 const { validationResult } = require('express-validator');
 
+const { authCheck } = require('../middlewares/auth');
 const { errorHandler } = require('../common/error-handler');
 const { GetUserUsingEmail, isValidPassword } = require('../models/user');
 
@@ -9,11 +10,7 @@ const router = express.Router();
 /*
  * Get a session
  */
-router.get('/', async (req, res, next) => {
-  if (!req.session || !req.session.user) {
-    return errorHandler('session_not-found', 404, res, next);
-  }
-
+router.get('/', authCheck, async (req, res, next) => {
   let { name } = req.session.user;
 
   res.json({ name });
