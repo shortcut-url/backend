@@ -9,5 +9,7 @@
   "create-short-url_not-url": "Не корректный URL",
 
   "create-session_user-not-found": "Пользователя с таким Email не существует или вы указали не правильный пароль",
-  "create-session_incorrect-password": "Пользователя с таким Email не существует или вы указали не правильный пароль"
+  "create-session_incorrect-password": "Пользователя с таким Email не существует или вы указали не правильный пароль",
+
+  "get-created-url_url-not_found": "URL не найден"
 }

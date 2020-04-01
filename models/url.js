@@ -24,6 +24,29 @@ function createShortURL({
   );
 }
 
+function getURLData({ URL, userId }) {
+  return dbQuery(
+    `
+      SELECT 
+        "url", 
+        "originalURL", 
+        "userId", 
+        "trackingNumberTransitions", 
+        "numberTransitions", 
+        "disabled", 
+        "createdAt", 
+        "updatedAt" 
+      FROM 
+        urls 
+      WHERE 
+        "url" = $1 
+        AND "userId" = $2  
+    `,
+    [URL, userId]
+  );
+}
+
 module.exports = {
-  createShortURL
+  createShortURL,
+  getURLData
 };

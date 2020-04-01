@@ -2,8 +2,9 @@ const express = require('express');
 const { validationResult } = require('express-validator');
 
 const { validation } = require('../middlewares/validation');
+const { authCheck } = require('../middlewares/auth');
 const { errorHandler } = require('../common/error-handler');
-const { createShortURL } = require('../models/url');
+const { createShortURL, getURLData } = require('../models/url');
 
 const router = express.Router();
 
@@ -30,6 +31,35 @@ router.post('/', validation('url_create-short-url'), async (req, res, next) => {
   });
 
   res.send(createdShortURL.rows[0].url);
+});
+
+/*
+ * Get created URL data
+ */
+
+router.get('/:URL', authCheck, async (req, res, next) => {
+  let currentUser = req.session.user;
+
+  let { URL } = req.params;
+
+  let {
+    rows: [URLData]
+  } = await getURLData({ URL, userId: currentUser.id });
+
+  if (!URLData) errorHandler('get-created-url_url-not_found', 404, res, next);
+
+  let {
+    trackingNumberTransitions,
+    numberTransitions,
+    disabled,
+    ...restDataURL
+  } = URLData;
+
+  res.json({
+    settings: { trackingNumberTransitions, disabled },
+    statistics: { numberTransitions },
+    ...restDataURL
+  });
 });
 
 module.exports = router;
