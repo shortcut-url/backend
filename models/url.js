@@ -46,7 +46,22 @@ function getURLData({ URL, userId }) {
   );
 }
 
+function changeParameterURL({ URL, name, value, userId }) {
+  return dbQuery(
+    `
+      UPDATE 
+        urls 
+      SET 
+        "${name}" = ${value} 
+      WHERE 
+        "url" = '${URL}' 
+        AND "userId" = '${userId}' RETURNING *
+    `
+  );
+}
+
 module.exports = {
   createShortURL,
-  getURLData
+  getURLData,
+  changeParameterURL
 };

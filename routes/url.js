@@ -4,7 +4,11 @@ const { validationResult } = require('express-validator');
 const { validation } = require('../middlewares/validation');
 const { authCheck } = require('../middlewares/auth');
 const { errorHandler } = require('../common/error-handler');
-const { createShortURL, getURLData } = require('../models/url');
+const {
+  createShortURL,
+  getURLData,
+  changeParameterURL
+} = require('../models/url');
 
 const router = express.Router();
 
@@ -60,6 +64,46 @@ router.get('/:URL', authCheck, async (req, res, next) => {
     statistics: { numberTransitions },
     ...restDataURL
   });
+});
+
+/*
+ * Change URL parameter
+ */
+
+router.post('/:URL/parameter', authCheck, async (req, res, next) => {
+  let currentUser = req.session.user;
+
+  let { URL } = req.params;
+
+  let { name, value } = req.body;
+
+  let query;
+
+  switch (name) {
+    case 'disabled':
+    case 'trackingNumberTransitions':
+      query = await changeParameterURL({
+        URL,
+        name,
+        value: Boolean(value),
+        userId: currentUser.id
+      });
+      break;
+
+    default:
+      break;
+  }
+
+  if (!query || !query.rows[0]) {
+    return errorHandler(
+      'change-user-url-parameter_url-not-found',
+      404,
+      res,
+      next
+    );
+  }
+
+  res.sendStatus(200);
 });
 
 module.exports = router;
