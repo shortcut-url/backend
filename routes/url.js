@@ -7,7 +7,8 @@ const { errorHandler } = require('../common/error-handler');
 const {
   createShortURL,
   getURLData,
-  changeParameterURL
+  changeParameterURL,
+  deleteURL
 } = require('../models/url');
 
 const router = express.Router();
@@ -101,6 +102,24 @@ router.post('/:URL/parameter', authCheck, async (req, res, next) => {
       res,
       next
     );
+  }
+
+  res.sendStatus(200);
+});
+
+/*
+ * Delete URL
+ */
+
+router.delete('/:URL', authCheck, async (req, res, next) => {
+  let currentUser = req.session.user;
+
+  let { URL } = req.params;
+
+  let deleteURLQuery = await deleteURL({ URL, userId: currentUser.id });
+
+  if (!deleteURLQuery.rowCount) {
+    return errorHandler('delete-url_url-not-found', 404, res, next);
   }
 
   res.sendStatus(200);

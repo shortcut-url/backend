@@ -13,5 +13,7 @@
 
   "get-created-url_url-not_found": "URL not found",
 
-  "change-user-url-parameter_url-not-found": "URL is not found or you are not its creator"
+  "change-user-url-parameter_url-not-found": "URL is not found or you are not its creator",
+
+  "delete-url_url-not-found": "URL is not found. Maybe you are not its creator or it has already been deleted"
 }

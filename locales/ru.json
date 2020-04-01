@@ -13,5 +13,7 @@
 
   "get-created-url_url-not_found": "URL не найден",
 
-  "change-user-url-parameter_url-not-found": "URL не найден или вы не являетесь его создателем"
+  "change-user-url-parameter_url-not-found": "URL не найден или вы не являетесь его создателем",
+
+  "delete-url_url-not-found": "URL не найден. Возможно Вы не являетесь его создателем или он уже был удалён"
 }

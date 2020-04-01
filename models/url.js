@@ -60,8 +60,22 @@ function changeParameterURL({ URL, name, value, userId }) {
   );
 }
 
+function deleteURL({ URL, userId }) {
+  return dbQuery(
+    `
+      DELETE FROM 
+        urls 
+      WHERE 
+        "url" = $1 
+        AND "userId" = $2
+    `,
+    [URL, userId]
+  );
+}
+
 module.exports = {
   createShortURL,
   getURLData,
-  changeParameterURL
+  changeParameterURL,
+  deleteURL
 };
