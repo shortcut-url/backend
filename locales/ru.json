@@ -1,6 +1,8 @@
 {
   "session_not-found": "Сессия не найдена",
 
+  "delete-account_account-not-found": "Аккаунт не найден",
+
   "create-account_not-email": "Вы должны указать электронную почту в формате example@example.com",
   "create-account_incorrect-password-length": "Пароль должен содержать от 4 до 64 символов",
   "create-account_incorrect-name-length": "Имя пользователя должно содержать от 3 до 32 символов",

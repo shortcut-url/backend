@@ -1,6 +1,8 @@
 {
   "session_not-found": "Session not found",
 
+  "delete-account_account-not-found": "Account not found",
+
   "create-account_not-email": "You must transfer emails in the format example@example.com",
   "create-account_incorrect-password-length": "Password must be between 4 and 64 characters",
   "create-account_incorrect-name-length": "Username must be between 4 and 64 characters",

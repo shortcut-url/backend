@@ -27,11 +27,12 @@ async function GetUserUsingEmail({ email }) {
         "email", 
         "password", 
         "name", 
-        "trackingNumberTransitions"
+        "trackingNumberTransitions" 
       FROM 
         users 
       WHERE 
-        email = $1
+        email = $1 
+        AND "deleted" = false
     `,
     [email]
   );
@@ -74,10 +75,26 @@ function getCreatedURLs({ userId, startIndex, stopIndex }) {
   );
 }
 
+function deleteAccount(userId) {
+  return dbQuery(
+    `
+      UPDATE
+        users
+      SET
+        "deleted" = true
+      WHERE
+        "id" = $1
+        AND "deleted" = false
+    `,
+    [userId]
+  );
+}
+
 module.exports = {
   createNewAccountWithEmail,
   GetUserUsingEmail,
   isValidPassword,
   changeParameterFutureURLs,
-  getCreatedURLs
+  getCreatedURLs,
+  deleteAccount,
 };

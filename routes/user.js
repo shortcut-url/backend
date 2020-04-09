@@ -7,7 +7,8 @@ const { errorHandler } = require('../common/error-handler');
 const {
   createNewAccountWithEmail,
   changeParameterFutureURLs,
-  getCreatedURLs
+  getCreatedURLs,
+  deleteAccount,
 } = require('../models/user');
 
 const router = express.Router();
@@ -38,13 +39,30 @@ router.post('/', validation('user_create-account'), async (req, res, next) => {
 });
 
 /*
+ * Delete account
+ */
+router.delete('/', authCheck, async (req, res, next) => {
+  let currentUser = req.session.user;
+
+  let deleteAccountQuery = await deleteAccount(currentUser.id);
+
+  if (!deleteAccountQuery.rowCount) {
+    return errorHandler('delete-account_account-not-found', 404, res, next);
+  }
+
+  req.session.destroy();
+
+  res.sendStatus(200);
+});
+
+/*
  * Get settings for future urls
  */
 router.get('/settings/future-urls', authCheck, (req, res, next) => {
   let currentUser = req.session.user;
 
   res.json({
-    trackingNumberTransitions: currentUser.trackingNumberTransitions
+    trackingNumberTransitions: currentUser.trackingNumberTransitions,
   });
 });
 
@@ -63,7 +81,7 @@ router.post('/settings/future-urls', authCheck, async (req, res, next) => {
       await changeParameterFutureURLs({
         name: parameter.name,
         value: Boolean(parameter.value),
-        userId: currentUser.id
+        userId: currentUser.id,
       });
       break;
 
@@ -86,7 +104,7 @@ router.get('/created-urls', authCheck, async (req, res, next) => {
   let createdURLs = await getCreatedURLs({
     startIndex,
     stopIndex,
-    userId: currentUser.id
+    userId: currentUser.id,
   });
 
   res.json(createdURLs.rows);
