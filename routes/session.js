@@ -43,13 +43,22 @@ router.post('/', async (req, res, next) => {
       id: foundUser.id,
       email: foundUser.email,
       name: foundUser.name,
-      trackingNumberTransitions: foundUser.trackingNumberTransitions
+      trackingNumberTransitions: foundUser.trackingNumberTransitions,
     };
 
     res.sendStatus(200);
   } catch (error) {
     errorHandler(error, 404, res, next);
   }
+});
+
+/*
+ * Destroy session
+ */
+router.delete('/', authCheck, async (req, res, next) => {
+  await req.session.destroy();
+
+  res.sendStatus(200);
 });
 
 module.exports = router;
