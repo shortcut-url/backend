@@ -27,7 +27,8 @@ async function GetUserUsingEmail({ email }) {
         "email", 
         "password", 
         "name", 
-        "trackingNumberTransitions" 
+        "trackingNumberTransitions",
+        "srcAvatar"
       FROM 
         users 
       WHERE 
@@ -90,6 +91,20 @@ function deleteAccount(userId) {
   );
 }
 
+function saveAvatar({ srcAvatar, userId }) {
+  return dbQuery(
+    `
+      UPDATE
+        users
+      SET
+        "srcAvatar" = $1
+      WHERE
+        "id" = $2
+    `,
+    [srcAvatar, userId]
+  );
+}
+
 module.exports = {
   createNewAccountWithEmail,
   GetUserUsingEmail,
@@ -97,4 +112,5 @@ module.exports = {
   changeParameterFutureURLs,
   getCreatedURLs,
   deleteAccount,
+  saveAvatar,
 };

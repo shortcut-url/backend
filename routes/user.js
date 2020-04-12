@@ -1,14 +1,19 @@
 const express = require('express');
 const { validationResult } = require('express-validator');
+const fs = require('fs');
+const multer = require('multer');
+const { nanoid } = require('nanoid');
 
 const { validation } = require('../middlewares/validation');
 const { authCheck } = require('../middlewares/auth');
 const { errorHandler } = require('../common/error-handler');
+const { createOrReturnDirectory } = require('../common/fs');
 const {
   createNewAccountWithEmail,
   changeParameterFutureURLs,
   getCreatedURLs,
   deleteAccount,
+  saveAvatar,
 } = require('../models/user');
 
 const router = express.Router();
@@ -109,5 +114,49 @@ router.get('/created-urls', authCheck, async (req, res, next) => {
 
   res.json(createdURLs.rows);
 });
+
+/*
+ * Upload avatar
+ */
+let diskStoringUserAvatar = multer.diskStorage({
+  destination: function (req, file, cb) {
+    let userId = req.session.user.id;
+
+    let dir = `uploads/users/${userId}`;
+
+    return cb(null, createOrReturnDirectory(dir));
+  },
+  filename: function (req, file, cb) {
+    cb(null, nanoid(5));
+  },
+});
+
+let uploadUserAvatar = multer({
+  storage: diskStoringUserAvatar,
+});
+
+router.post(
+  '/avatar',
+  authCheck,
+  uploadUserAvatar.single('image'),
+  async (req, res) => {
+    let uploadedAvatarName = req.file.filename;
+
+    if (!uploadedAvatarName) {
+      return res.status(400).send(res.__('upload-avatar_not-created'));
+    }
+
+    let currentUserId = req.session.user.id;
+
+    await saveAvatar({
+      srcAvatar: uploadedAvatarName,
+      userId: currentUserId,
+    });
+
+    req.session.user.srcAvatar = uploadedAvatarName;
+
+    res.send(`/api/user/avatar/${uploadedAvatarName}`);
+  }
+);
 
 module.exports = router;

@@ -11,9 +11,9 @@ const router = express.Router();
  * Get a session
  */
 router.get('/', authCheck, async (req, res, next) => {
-  let { name } = req.session.user;
+  let { name, srcAvatar } = req.session.user;
 
-  res.json({ name });
+  res.json({ name, srcAvatar: `/api/user/avatar/${srcAvatar}` });
 });
 
 /*
@@ -29,22 +29,17 @@ router.post('/', async (req, res, next) => {
   let { email, password } = req.body;
 
   try {
-    let getUserQuery = await GetUserUsingEmail({ email, password });
+    let {
+      rows: [userData],
+    } = await GetUserUsingEmail({ email, password });
 
-    if (!getUserQuery.rows.length) throw 'create-session_user-not-found';
+    if (!userData) throw 'create-session_user-not-found';
 
-    let foundUser = getUserQuery.rows[0];
-
-    if (!isValidPassword(password, foundUser.password)) {
+    if (!isValidPassword(password, userData.password)) {
       throw 'create-session_incorrect-password';
     }
 
-    req.session.user = {
-      id: foundUser.id,
-      email: foundUser.email,
-      name: foundUser.name,
-      trackingNumberTransitions: foundUser.trackingNumberTransitions,
-    };
+    req.session.user = userData;
 
     res.sendStatus(200);
   } catch (error) {

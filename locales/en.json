@@ -17,5 +17,7 @@
 
   "change-user-url-parameter_url-not-found": "URL is not found or you are not its creator",
 
-  "delete-url_url-not-found": "URL is not found. Maybe you are not its creator or it has already been deleted"
+  "delete-url_url-not-found": "URL is not found. Maybe you are not its creator or it has already been deleted",
+
+  "upload-avatar_not-created": "New avatar not uploaded",
 }
