@@ -105,6 +105,20 @@ function saveAvatar({ srcAvatar, userId }) {
   );
 }
 
+function deleteAvatar(userId) {
+  return dbQuery(
+    `
+      UPDATE
+        users
+      SET
+        "srcAvatar" = null
+      WHERE
+        "id" = $1
+    `,
+    [userId]
+  );
+}
+
 module.exports = {
   createNewAccountWithEmail,
   GetUserUsingEmail,
@@ -113,4 +127,5 @@ module.exports = {
   getCreatedURLs,
   deleteAccount,
   saveAvatar,
+  deleteAvatar,
 };

@@ -15,6 +15,7 @@ const {
   getCreatedURLs,
   deleteAccount,
   saveAvatar,
+  deleteAvatar,
 } = require('../models/user');
 
 const router = express.Router();
@@ -189,5 +190,19 @@ router.get(
     res.end(bufferAvatarFormatting, 'binary');
   }
 );
+
+/*
+ * Delete avatar
+ */
+
+router.delete('/avatar', authCheck, async (req, res, next) => {
+  let userId = req.session.user.id;
+
+  await deleteAvatar(userId);
+
+  delete req.session.user.srcAvatar;
+
+  res.sendStatus(200);
+});
 
 module.exports = router;
