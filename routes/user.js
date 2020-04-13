@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 const fs = require('fs');
 const multer = require('multer');
 const { nanoid } = require('nanoid');
+const sharp = require('sharp');
 
 const { validation } = require('../middlewares/validation');
 const { authCheck } = require('../middlewares/auth');
@@ -156,6 +157,36 @@ router.post(
     req.session.user.srcAvatar = uploadedAvatarName;
 
     res.send(`/api/user/avatar/${uploadedAvatarName}`);
+  }
+);
+
+/*
+ * Get avatar
+ */
+router.get(
+  '/avatar/:avatarId',
+  authCheck,
+  validation('user_get-avatar'),
+  async (req, res, next) => {
+    let validationErrors = validationResult(req);
+
+    if (!validationErrors.isEmpty()) {
+      errorHandler(validationErrors.errors, 400, res, next);
+    }
+
+    let userId = req.session.user.id;
+
+    let { avatarId } = req.params;
+    let { format = 'jpg' } = req.query;
+
+    let findAvatar = fs.readFileSync(`uploads/users/${userId}/${avatarId}`);
+
+    let bufferAvatarFormatting = await sharp(findAvatar)
+      .resize(100, 100)
+      .toFormat(format)
+      .toBuffer();
+
+    res.end(bufferAvatarFormatting, 'binary');
   }
 );
 

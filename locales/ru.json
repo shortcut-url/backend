@@ -20,4 +20,8 @@
   "delete-url_url-not-found": "URL не найден. Возможно Вы не являетесь его создателем или он уже был удалён",
 
   "upload-avatar_not-created": "Новый аватар не был загружен",
+
+  "get-avatar_not-found": "Аватар не найден",
+  "get-avatar_incorrect-avatar-id-length": "Id аватара должен быть от 2 до 5 символов",
+  "get-avatar_incorrect-format": "Формат изображения может быть тольк JPG или webP"
 }

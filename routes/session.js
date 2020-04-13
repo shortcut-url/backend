@@ -13,7 +13,10 @@ const router = express.Router();
 router.get('/', authCheck, async (req, res, next) => {
   let { name, srcAvatar } = req.session.user;
 
-  res.json({ name, srcAvatar: `/api/user/avatar/${srcAvatar}` });
+  res.json({
+    name,
+    srcAvatar: srcAvatar ? `/api/user/avatar/${srcAvatar}` : null,
+  });
 });
 
 /*

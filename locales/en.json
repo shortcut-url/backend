@@ -20,4 +20,8 @@
   "delete-url_url-not-found": "URL is not found. Maybe you are not its creator or it has already been deleted",
 
   "upload-avatar_not-created": "New avatar not uploaded",
+
+  "get-avatar_not-found": "Avatar not found",
+  "get-avatar_incorrect-avatar-id-length": "Avatar ID must be between 2 and 5 characters",
+  "get-avatar_incorrect-format": "Image format can only be JPG or webP"
 }
