@@ -34,15 +34,15 @@ router.post('/', validation('user_create-account'), async (req, res, next) => {
 
   try {
     await createNewAccountWithEmail({ email, password, name });
-
-    res.sendStatus(200);
   } catch ({ code, constraint }) {
     if (code !== '23505') return;
 
     if (constraint === 'users_email_key') {
-      errorHandler('create-account_not-unique-email', 400, res, next);
+      res.status(403).send(res.__('create-account_not-unique-email'));
     }
   }
+
+  res.sendStatus(200);
 });
 
 /*
@@ -54,7 +54,7 @@ router.delete('/', authCheck, async (req, res, next) => {
   let deleteAccountQuery = await deleteAccount(currentUser.id);
 
   if (!deleteAccountQuery.rowCount) {
-    return errorHandler('delete-account_account-not-found', 404, res, next);
+    res.status(404).send(res.__('delete-account_account-not-found'));
   }
 
   req.session.destroy();
@@ -102,19 +102,18 @@ router.post('/settings/future-urls', authCheck, async (req, res, next) => {
 /*
  * Get created URLs
  */
-
 router.get('/created-urls', authCheck, async (req, res, next) => {
   let currentUser = req.session.user;
 
   let { startIndex, stopIndex } = req.query;
 
-  let createdURLs = await getCreatedURLs({
+  let { rows: createdURLs } = await getCreatedURLs({
     startIndex,
     stopIndex,
     userId: currentUser.id,
   });
 
-  res.json(createdURLs.rows);
+  res.json(createdURLs);
 });
 
 /*
@@ -122,9 +121,9 @@ router.get('/created-urls', authCheck, async (req, res, next) => {
  */
 let diskStoringUserAvatar = multer.diskStorage({
   destination: function (req, file, cb) {
-    let userId = req.session.user.id;
+    let sessionUserId = req.session.user.id;
 
-    let dir = `uploads/users/${userId}`;
+    let dir = `uploads/users/${sessionUserId}`;
 
     return cb(null, createOrReturnDirectory(dir));
   },
@@ -148,11 +147,11 @@ router.post(
       return res.status(400).send(res.__('upload-avatar_not-created'));
     }
 
-    let currentUserId = req.session.user.id;
+    let sessionUserId = req.session.user.id;
 
     await saveAvatar({
       srcAvatar: uploadedAvatarName,
-      userId: currentUserId,
+      userId: sessionUserId,
     });
 
     req.session.user.srcAvatar = uploadedAvatarName;
@@ -175,12 +174,14 @@ router.get(
       errorHandler(validationErrors.errors, 400, res, next);
     }
 
-    let userId = req.session.user.id;
+    let sessionUserId = req.session.user.id;
 
     let { avatarId } = req.params;
     let { format = 'jpg' } = req.query;
 
-    let findAvatar = fs.readFileSync(`uploads/users/${userId}/${avatarId}`);
+    let findAvatar = fs.readFileSync(
+      `uploads/users/${sessionUserId}/${avatarId}`
+    );
 
     let bufferAvatarFormatting = await sharp(findAvatar)
       .resize(100, 100)
@@ -196,9 +197,9 @@ router.get(
  */
 
 router.delete('/avatar', authCheck, async (req, res, next) => {
-  let userId = req.session.user.id;
+  let sessionUserId = req.session.user.id;
 
-  await deleteAvatar(userId);
+  await deleteAvatar(sessionUserId);
 
   delete req.session.user.srcAvatar;
 

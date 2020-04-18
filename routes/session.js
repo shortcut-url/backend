@@ -31,23 +31,21 @@ router.post('/', async (req, res, next) => {
 
   let { email, password } = req.body;
 
-  try {
-    let {
-      rows: [userData],
-    } = await GetUserUsingEmail({ email, password });
+  let {
+    rows: [user],
+  } = await GetUserUsingEmail({ email, password });
 
-    if (!userData) throw 'create-session_user-not-found';
-
-    if (!isValidPassword(password, userData.password)) {
-      throw 'create-session_incorrect-password';
-    }
-
-    req.session.user = userData;
-
-    res.sendStatus(200);
-  } catch (error) {
-    errorHandler(error, 404, res, next);
+  if (!user) {
+    res.status(404).send(res.__('create-session_user-not-found'));
   }
+
+  if (!isValidPassword(password, user.password)) {
+    res.status(403).send(res.__('create-session_incorrect-password'));
+  }
+
+  req.session.user = user;
+
+  res.sendStatus(200);
 });
 
 /*

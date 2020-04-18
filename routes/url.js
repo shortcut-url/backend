@@ -8,7 +8,7 @@ const {
   createShortURL,
   getURLData,
   changeParameterURL,
-  deleteURL
+  deleteURL,
 } = require('../models/url');
 
 const router = express.Router();
@@ -27,50 +27,52 @@ router.post('/', validation('url_create-short-url'), async (req, res, next) => {
 
   let { originalURL } = req.body;
 
-  let createdShortURL = await createShortURL({
+  let {
+    rows: [shortURL],
+  } = await createShortURL({
     originalURL,
     userId: currentUser ? currentUser.id : null,
     trackingNumberTransitions: currentUser
       ? currentUser.trackingNumberTransitions
-      : false
+      : false,
   });
 
-  res.send(createdShortURL.rows[0].url);
+  res.send(shortURL.url);
 });
 
 /*
- * Get created URL data
+ * Get created URL
  */
-
 router.get('/:URL', authCheck, async (req, res, next) => {
   let currentUser = req.session.user;
 
   let { URL } = req.params;
 
   let {
-    rows: [URLData]
+    rows: [createdURL],
   } = await getURLData({ URL, userId: currentUser.id });
 
-  if (!URLData) errorHandler('get-created-url_url-not_found', 404, res, next);
+  if (!createdURL) {
+    res.status(404).send(res.__('get-created-url_url-not_found'));
+  }
 
   let {
     trackingNumberTransitions,
     numberTransitions,
     disabled,
     ...restDataURL
-  } = URLData;
+  } = createdURL;
 
   res.json({
     settings: { trackingNumberTransitions, disabled },
     statistics: { numberTransitions },
-    ...restDataURL
+    ...restDataURL,
   });
 });
 
 /*
  * Change URL parameter
  */
-
 router.post('/:URL/parameter', authCheck, async (req, res, next) => {
   let currentUser = req.session.user;
 
@@ -78,16 +80,16 @@ router.post('/:URL/parameter', authCheck, async (req, res, next) => {
 
   let { name, value } = req.body;
 
-  let query;
+  let changeParameterURLQuery;
 
   switch (name) {
     case 'disabled':
     case 'trackingNumberTransitions':
-      query = await changeParameterURL({
+      changeParameterURLQuery = await changeParameterURL({
         URL,
         name,
         value: Boolean(value),
-        userId: currentUser.id
+        userId: currentUser.id,
       });
       break;
 
@@ -95,13 +97,8 @@ router.post('/:URL/parameter', authCheck, async (req, res, next) => {
       break;
   }
 
-  if (!query || !query.rows[0]) {
-    return errorHandler(
-      'change-user-url-parameter_url-not-found',
-      404,
-      res,
-      next
-    );
+  if (!changeParameterURLQuery || !changeParameterURLQuery.rows[0]) {
+    res.status(404).send(res.__('change-user-url-parameter_url-not-found'));
   }
 
   res.sendStatus(200);
@@ -110,7 +107,6 @@ router.post('/:URL/parameter', authCheck, async (req, res, next) => {
 /*
  * Delete URL
  */
-
 router.delete('/:URL', authCheck, async (req, res, next) => {
   let currentUser = req.session.user;
 
