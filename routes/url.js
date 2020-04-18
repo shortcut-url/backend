@@ -73,38 +73,49 @@ router.get('/:URL', authCheck, async (req, res) => {
 /*
  * Change URL parameter
  */
-router.post('/:URL/parameter', authCheck, async (req, res, next) => {
-  let currentUser = req.session.user;
+router.post(
+  '/:URL/parameter',
+  validator('url_change-url-parameter'),
+  authCheck,
+  async (req, res, next) => {
+    let validationErrors = validationResult(req);
 
-  let { URL } = req.params;
+    if (!validationErrors.isEmpty()) {
+      return errorHandler(validationErrors.errors, 400, res, next);
+    }
 
-  let { name, value } = req.body;
+    let currentUser = req.session.user;
 
-  let changeParameterURLQuery;
+    let { URL } = req.params;
 
-  switch (name) {
-    case 'disabled':
-    case 'trackingNumberTransitions':
-      changeParameterURLQuery = await changeParameterURL({
-        URL,
-        name,
-        value: Boolean(value),
-        userId: currentUser.id,
-      });
-      break;
+    let { name, value } = req.body;
 
-    default:
-      break;
+    let changeParameterURLQuery;
+
+    switch (name) {
+      case 'disabled':
+      case 'trackingNumberTransitions':
+        changeParameterURLQuery = await changeParameterURL({
+          URL,
+          name,
+          value: Boolean(value),
+          userId: currentUser.id,
+        });
+        break;
+
+      default:
+        break;
+    }
+
+    if (!changeParameterURLQuery || !changeParameterURLQuery.rows[0]) {
+      return res
+        .status(404)
+        .send(res.__('change-user-url-parameter_url-not-found'));
+    }
+
+    res.sendStatus(200);
   }
-
-  if (!changeParameterURLQuery || !changeParameterURLQuery.rows[0]) {
-    return res
-      .status(404)
-      .send(res.__('change-user-url-parameter_url-not-found'));
-  }
-
-  res.sendStatus(200);
-});
+);
 
 /*
  * Delete URL

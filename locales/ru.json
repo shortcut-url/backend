@@ -1,6 +1,9 @@
 {
   "session_not-found": "Сессия не найдена",
 
+  "create-session_not-email": "Вы должны указать электронную почту в формате example@example.com",
+  "create-session_incorrect-password-length": "Пароль должен содержать от 4 до 64 символов",
+
   "delete-account_account-not-found": "Аккаунт не найден",
 
   "create-account_not-email": "Вы должны указать электронную почту в формате example@example.com",
@@ -23,5 +26,13 @@
 
   "get-avatar_not-found": "Аватар не найден",
   "get-avatar_incorrect-avatar-id-length": "Id аватара должен быть от 2 до 5 символов",
-  "get-avatar_incorrect-format": "Формат изображения может быть тольк JPG или webP"
+  "get-avatar_incorrect-format": "Формат изображения может быть тольк JPG или webP",
+
+  "change-url-parameter_incorrect-name": "Не правильное название параметра",
+  "change-url-parameter_incorrect-value": "Не правильное значение для данного параметра",
+
+  "change-settings-future-urls_incorrect-name": "Не правильное название параметра",
+
+  "get-created-urls_incorrect-start-index": "startIndex должен быть числом",
+  "get-created-urls_incorrect-stop-index": "stopIndex должен быть числом"
 }

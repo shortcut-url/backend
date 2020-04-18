@@ -65,7 +65,7 @@ router.delete('/', authCheck, async (req, res, next) => {
 /*
  * Get settings for future urls
  */
-router.get('/settings/future-urls', authCheck, (req, res, next) => {
+router.get('/settings/future-urls', authCheck, (req, res) => {
   let currentUser = req.session.user;
 
   res.json({
@@ -74,47 +74,69 @@ router.get('/settings/future-urls', authCheck, (req, res, next) => {
 });
 
 /*
- * Change user settings for future urls
+ * Change settings for future urls
  */
-router.post('/settings/future-urls', authCheck, async (req, res, next) => {
-  let currentUser = req.session.user;
+router.post(
+  '/settings/future-urls',
+  validator('user-change-settings-future-urls'),
+  authCheck,
+  async (req, res, next) => {
+    let validationErrors = validationResult(req);
 
-  let parameter = req.body;
+    if (!validationErrors.isEmpty()) {
+      return errorHandler(validationErrors.errors, 400, res, next);
+    }
 
-  switch (parameter.name) {
-    case 'trackingNumberTransitions':
-      currentUser.trackingNumberTransitions = parameter.value;
+    let currentUser = req.session.user;
 
-      await changeParameterFutureURLs({
-        name: parameter.name,
-        value: Boolean(parameter.value),
-        userId: currentUser.id,
-      });
-      break;
+    let parameter = req.body;
 
-    default:
-      break;
+    switch (parameter.name) {
+      case 'trackingNumberTransitions':
+        currentUser.trackingNumberTransitions = parameter.value;
+
+        await changeParameterFutureURLs({
+          name: parameter.name,
+          value: Boolean(parameter.value),
+          userId: currentUser.id,
+        });
+        break;
+
+      default:
+        break;
+    }
+
+    res.sendStatus(200);
   }
-
-  res.sendStatus(200);
-});
+);
 
 /*
  * Get created URLs
  */
-router.get('/created-urls', authCheck, async (req, res, next) => {
-  let currentUser = req.session.user;
+router.get(
+  '/created-urls',
+  validator('user_get-created-urls'),
+  authCheck,
+  async (req, res, next) => {
+    let validationErrors = validationResult(req);
 
-  let { startIndex, stopIndex } = req.query;
+    if (!validationErrors.isEmpty()) {
+      return errorHandler(validationErrors.errors, 400, res, next);
+    }
 
-  let { rows: createdURLs } = await getCreatedURLs({
-    startIndex,
-    stopIndex,
-    userId: currentUser.id,
-  });
+    let currentUser = req.session.user;
 
-  res.json(createdURLs);
-});
+    let { startIndex, stopIndex } = req.query;
+
+    let { rows: createdURLs } = await getCreatedURLs({
+      startIndex,
+      stopIndex,
+      userId: currentUser.id,
+    });
+
+    res.json(createdURLs);
+  }
+);
 
 /*
  * Upload avatar

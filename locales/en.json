@@ -1,6 +1,9 @@
 {
   "session_not-found": "Session not found",
 
+  "create-session_not-email": "You must transfer emails in the format example@example.com",
+  "create-session_incorrect-password-length": "Password must be between 4 and 64 characters",
+
   "delete-account_account-not-found": "Account not found",
 
   "create-account_not-email": "You must transfer emails in the format example@example.com",
@@ -23,5 +26,13 @@
 
   "get-avatar_not-found": "Avatar not found",
   "get-avatar_incorrect-avatar-id-length": "Avatar ID must be between 2 and 5 characters",
-  "get-avatar_incorrect-format": "Image format can only be JPG or webP"
+  "get-avatar_incorrect-format": "Image format can only be JPG or webP",
+
+  "change-url-parameter_incorrect-name": "Incorrect parameter name",
+  "change-url-parameter_incorrect-value": "Incorrect parameter value",
+
+  "change-settings-future-urls_incorrect-name": "Incorrect parameter name",
+
+  "get-created-urls_incorrect-start-index": "Incorrect start index",
+  "get-created-urls_incorrect-stop-index": "Incorrect stop index"
 }
