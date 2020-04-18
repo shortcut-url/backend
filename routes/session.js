@@ -26,7 +26,7 @@ router.post('/', async (req, res, next) => {
   let validationErrors = validationResult(req);
 
   if (!validationErrors.isEmpty()) {
-    errorHandler(validationErrors.errors, 400, res, next);
+      return errorHandler(validationErrors.errors, 400, res, next);
   }
 
   let { email, password } = req.body;
@@ -36,11 +36,11 @@ router.post('/', async (req, res, next) => {
   } = await GetUserUsingEmail({ email, password });
 
   if (!user) {
-    res.status(404).send(res.__('create-session_user-not-found'));
+      return res.status(404).send(res.__('create-session_user-not-found'));
   }
 
   if (!isValidPassword(password, user.password)) {
-    res.status(403).send(res.__('create-session_incorrect-password'));
+      return res.status(403).send(res.__('create-session_incorrect-password'));
   }
 
   req.session.user = user;

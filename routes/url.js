@@ -1,7 +1,7 @@
 const express = require('express');
 const { validationResult } = require('express-validator');
 
-const { validation } = require('../middlewares/validation');
+const { validator } = require('../middlewares/validator');
 const { authCheck } = require('../middlewares/auth');
 const { errorHandler } = require('../common/error-handler');
 const {
@@ -16,11 +16,11 @@ const router = express.Router();
 /*
  * Create short url
  */
-router.post('/', validation('url_create-short-url'), async (req, res, next) => {
+router.post('/', validator('url_create-short-url'), async (req, res, next) => {
   let validationErrors = validationResult(req);
 
   if (!validationErrors.isEmpty()) {
-    errorHandler(validationErrors.errors, 400, res, next);
+    return errorHandler(validationErrors.errors, 400, res, next);
   }
 
   let currentUser = req.session.user;
@@ -43,7 +43,7 @@ router.post('/', validation('url_create-short-url'), async (req, res, next) => {
 /*
  * Get created URL
  */
-router.get('/:URL', authCheck, async (req, res, next) => {
+router.get('/:URL', authCheck, async (req, res) => {
   let currentUser = req.session.user;
 
   let { URL } = req.params;
@@ -53,7 +53,7 @@ router.get('/:URL', authCheck, async (req, res, next) => {
   } = await getURLData({ URL, userId: currentUser.id });
 
   if (!createdURL) {
-    res.status(404).send(res.__('get-created-url_url-not_found'));
+    return res.status(404).send(res.__('get-created-url_url-not_found'));
   }
 
   let {
@@ -98,7 +98,9 @@ router.post('/:URL/parameter', authCheck, async (req, res, next) => {
   }
 
   if (!changeParameterURLQuery || !changeParameterURLQuery.rows[0]) {
-    res.status(404).send(res.__('change-user-url-parameter_url-not-found'));
+    return res
+      .status(404)
+      .send(res.__('change-user-url-parameter_url-not-found'));
   }
 
   res.sendStatus(200);

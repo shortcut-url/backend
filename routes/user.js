@@ -5,7 +5,7 @@ const multer = require('multer');
 const { nanoid } = require('nanoid');
 const sharp = require('sharp');
 
-const { validation } = require('../middlewares/validation');
+const { validator } = require('../middlewares/validator');
 const { authCheck } = require('../middlewares/auth');
 const { errorHandler } = require('../common/error-handler');
 const { createOrReturnDirectory } = require('../common/fs');
@@ -23,11 +23,11 @@ const router = express.Router();
 /*
  * Create an account
  */
-router.post('/', validation('user_create-account'), async (req, res, next) => {
+router.post('/', validator('user_create-account'), async (req, res, next) => {
   let validationErrors = validationResult(req);
 
   if (!validationErrors.isEmpty()) {
-    errorHandler(validationErrors.errors, 400, res, next);
+    return errorHandler(validationErrors.errors, 400, res, next);
   }
 
   let { email, password, name } = req.body;
@@ -38,7 +38,7 @@ router.post('/', validation('user_create-account'), async (req, res, next) => {
     if (code !== '23505') return;
 
     if (constraint === 'users_email_key') {
-      res.status(403).send(res.__('create-account_not-unique-email'));
+      return res.status(403).send(res.__('create-account_not-unique-email'));
     }
   }
 
@@ -54,7 +54,7 @@ router.delete('/', authCheck, async (req, res, next) => {
   let deleteAccountQuery = await deleteAccount(currentUser.id);
 
   if (!deleteAccountQuery.rowCount) {
-    res.status(404).send(res.__('delete-account_account-not-found'));
+    return res.status(404).send(res.__('delete-account_account-not-found'));
   }
 
   req.session.destroy();
@@ -166,12 +166,12 @@ router.post(
 router.get(
   '/avatar/:avatarId',
   authCheck,
-  validation('user_get-avatar'),
+  validator('user_get-avatar'),
   async (req, res, next) => {
     let validationErrors = validationResult(req);
 
     if (!validationErrors.isEmpty()) {
-      errorHandler(validationErrors.errors, 400, res, next);
+      return errorHandler(validationErrors.errors, 400, res, next);
     }
 
     let sessionUserId = req.session.user.id;
