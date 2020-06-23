@@ -4,7 +4,10 @@ function validator(method) {
   switch (method) {
     case 'user_create-account':
       return [
-        body('email').isEmail().withMessage('create-account_not-email'),
+        body('email')
+          .normalizeEmail()
+          .isEmail()
+          .withMessage('create-account_not-email'),
         body('password')
           .isLength({ min: 6, max: 64 })
           .withMessage('create-account_incorrect-password-length'),
