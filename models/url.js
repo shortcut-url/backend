@@ -1,4 +1,5 @@
 const { nanoid } = require('nanoid');
+const normalizeUrl = require('normalize-url');
 
 const { dbQuery } = require('../db');
 
@@ -6,11 +7,13 @@ function createShortURL({
   originalURL,
   userId = null,
   shortURL = null,
-  trackingNumberTransitions = false
+  trackingNumberTransitions = false,
 }) {
   if (!shortURL) {
     shortURL = nanoid(6);
   }
+
+  originalURL = normalizeUrl(originalURL);
 
   return dbQuery(
     `
@@ -77,5 +80,5 @@ module.exports = {
   createShortURL,
   getURLData,
   changeParameterURL,
-  deleteURL
+  deleteURL,
 };
